@@ -1,38 +1,40 @@
-var sum = 0;
-var operator = null;
-var new_number = true;
-var last_input;
-const btns = document.querySelectorAll('.btn');
-const input = document.getElementsByTagName("input")[0];
-const calc_display = document.getElementById("calculating-display");
-const calc_operator_signs = ['+', '-', '/', '*'];
-const calc_functions_signs = ['=', 'c', "Backspace"];
-input.value = 0;
 
+let sum = 0;
+let operator = null;
+let isNewNumber = true;
+let lastInput;
+/להוסיף פעולת onclick()
+const btns = document.querySelectorAll('.btn');
+//תשיג דרך id
+const input = document.getElementsByid("#calculatorNumberInput")[0];
+const calcDisplay = document.getElementById("calculating-display");
+const calcFunctionsSigns = ['=', 'c', "Backspace"];
+input.value = 0;
+//הפוך את החלוקה לפונקציה
 btns.forEach(function(btn) {
   btn.addEventListener('click', function(event) {
-    var key = event.target.id;
+    let key = event.target.id;
     if ((key >= 0 && key <= 9) || key == ".") {
       writeInTextbox(key);
     }
-    if (calc_operator_signs.includes(key)) {
+    if (calcOperatorSigns.includes(key)) {
       clickOnOperator(key);
     }
-    if (calc_functions_signs.includes(key)) {
+    if (calcFunctionsSigns.includes(key)) {
       calcFunctions(key);
     }
   });
 });
 
 document.addEventListener("keydown", function(event) {
-  var key = event.key;
+  let key = event.key;
   if ((key >= 0 && key <= 9) || key == ".") {
     writeInTextbox(key);
   }
-  if (calc_operator_signs.includes(key)) {
+  if (calcOperatorSigns.includes(key)) {
     clickOnOperator(key);
   }
-  if (calc_functions_signs.includes(key)) {
+  if (calcFunctionsSigns.includes(key)) {
     calcFunctions(key);
   }
 });
@@ -47,28 +49,28 @@ function writeInTextbox(key) {
 
 function writeDot() {
   if (!input.value.includes(".")) {
-    if (new_number == false) {
+    if (isNewNumber == false) {
       input.value = "0.";
-      new_number = true;
+      isNewNumber = true;
     } else {
       input.value = input.value + ".";
-      new_number = true;
+      isNewNumber = true;
     }
   }
 }
 
 function writeNumbers(key) {
   if (input.value != 0) {
-    if (new_number == false) {
+    if (isNewNumber == false) {
       input.value = key;
-      new_number = true;
+      isNewNumber = true;
     } else {
       input.value = input.value + key;
-      new_number = true;
+      isNewNumber = true;
     }
   } else {
     input.value = key;
-    new_number = true;
+    isNewNumber = true;
   }
 }
 
@@ -85,48 +87,49 @@ function calcFunctions(key) {
       break;
   }
 }
-
+//שנה את  סיין
+//להוריד את if הוא מספר
 function clickOnOperator(sign) {
-  var value = input.value;
+  let value = input.value;
   //Check if value is a number.
   if (!isNaN(value)) {
-    if (calc_display.innerHTML == "") {
+    if (calcDisplay.innerHTML == "") {
       sum = Number(value);
-      calc_display.innerHTML = calc_display.innerHTML + sum + sign;
+      calcDisplay.innerHTML = calcDisplay.innerHTML + sum + sign;
       operator = sign;
-      new_number = false;
-    } else if (new_number == true) {
-      calc_display.innerHTML = calc_display.innerHTML = calc_display.innerHTML + value + sign;
+      isNewNumber = false;
+    } else if (isNewNumber == true) {
+      calcDisplay.innerHTML = calcDisplay.innerHTML + value + sign;
       operatorAction();
       operator = sign;
-      new_number = false;
+      isNewNumber = false;
     } else {
-      calc_display.innerHTML = calc_display.innerHTML.substring(0, calc_display.innerHTML.length - 1) + sign;
+      calcDisplay.innerHTML = calcDisplay.innerHTML.substring(0, calcDisplay.innerHTML.length - 1) + sign;
       operator = sign;
     }
   } else {
     alert(value + " is not a valid number.");
   }
 }
-
+//לא לעשות סוויצ
 function operatorAction() {
   switch (operator) {
     case "+":
-      sum = sum + last_input;
+      sum = sum + lastInput;
       break;
     case "-":
-      sum = sum - last_input;
+      sum = sum - lastInput;
       break;
     case "*":
-      sum = sum * last_input;
+      sum = sum * lastInput;
       break;
     case "/":
-      if (last_input == 0) {
+      if (lastInput == 0) {
         clear();
         alert("you can't divide with 0");
         break;
       }
-      sum = sum / last_input;
+      sum = sum / lastInput;
       break;
   }
 }
@@ -140,27 +143,27 @@ function backspace() {
 
 function clear() {
   input.value = 0;
-  calc_display.innerHTML = "";
-  new_number = true;
+  calcDisplay.innerHTML = "";
+  isNewNumber = true;
   operator = null;
   sum = 0;
 }
 
 function equalFunction() {
-  if (calc_display.innerHTML != "") {
-    last_input = Number(input.value);
+  if (calcDisplay.innerHTML != "") {
+    lastInput = Number(input.value);
     operatorAction();
     input.value = sum;
-    calc_display.innerHTML = "";
-    new_number = false;
-  } else if (new_number == true) {
+    calcDisplay.innerHTML = "";
+    isNewNumber = false;
+  } else if (isNewNumber == true) {
     sum = input.value;
     operatorAction();
-    new_number = false;
+    isNewNumber = false;
     input.value = sum;
   } else {
     operatorAction();
     input.value = sum;
-    new_number = false;
+    isNewNumber = false;
   }
 }
