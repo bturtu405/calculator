@@ -8,6 +8,7 @@ const btns = document.querySelectorAll('.btn');
 //תשיג דרך id
 const input = document.getElementsByid("#calculatorNumberInput")[0];
 const calcDisplay = document.getElementById("calculating-display");
+const calcOperatorSigns = ['+', '-', '/', '*'];
 const calcFunctionsSigns = ['=', 'c', "Backspace"];
 input.value = 0;
 //הפוך את החלוקה לפונקציה
