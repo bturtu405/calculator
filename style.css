@@ -1,89 +1,62 @@
 
-input{
-  height: 20px;
-  width: 267px;
-  margin-top:5px;
-  margin-left: 5px;
-  margin-bottom: 5px;
-  text-shadow:0px 1px 0px #ffffff;
+#calculatorNumberInput{
+  background-color: #ffffff;
+  border: 1px solid black;
+  border-radius: 4px;
+  width: 98%;
+  height: 30px;
+  font-size: 20px;
+  margin: 5% 0;
+  text-shadow: 0px 1px 0px #ffffff;
   text-align: right;
 }
 
-div.inline {
-   float:left;
-  }
-
-.calculator-wraper{
-  margin-top: 40px;
-  margin-left: 470px;
-  margin-right: 600px;
-  background-color:#ededed;
-  border-radius:4px;
+.calculator{
+  position: absolute;
+  margin-top: 5%;
+  margin-left: 40%;
+  margin-right: 40%;
+  background-color: #ededed;
+  border-radius: 4px;
   box-shadow:inset 0px 39px 0px -24px #ededed;
 }
 
-.calculator-buttons{
-
+.buttons-row{
+position: sticky;
+width: 95%;
+margin-left: 2.5%;
+height: 20%;
 }
 
-.button{
-  height: 20px;
-  width:20px;
-}
-
-.btn{
-  box-shadow:inset 0px 39px 0px -24px #e67a73;
-  	background-color:#e4685d;
-  	border-radius:4px;
-  	border:1px solid #ffffff;
-  	display:inline-block;
-  	cursor:pointer;
-  	color:#ffffff;
-  	font-family:Arial;
-  	font-size:15px;
-  	padding:6px 15px;
-  	text-decoration:none;
-  	text-shadow:0px 1px 0px #b23e35;
+ button{
+  height: 100%;
+  width: 18%;
+  box-shadow: inset 0px 39px 0px -24px #e67a73;
+  background-color: #e4685d;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  font-family: Arial;
+  font-size: 80%;
+  padding: 6px 15px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #b23e35;
 }
 
 .big-button{
-  height: 20px;
-  width: 76px;
+  width: 37.77%;
+
 }
 
-.btn:hover{
+button:hover{
   background-color: #bc3315;
   color: black;
 }
-/* .button {
-	background-color:#e4685d;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:20px;
-	font-weight:bold;
-	padding:32px 31px;
-	text-decoration:none;
-}
-.button:hover {
-	background-color:#eb675e;
-}
-.button:active {
-	position:relative;
-	top:1px;
-} */
 
-
-
-
-.buttons-container{
-
-}
 
 #calculating-display{
   height: 50px;
   width: 186px;
-  margin:5px 5px 5px 5px;
-  font-size:20px;
+  margin: 5px 5px 5px 5px;
+  font-size: 20px;
 }

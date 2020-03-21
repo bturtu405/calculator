@@ -1,170 +1,229 @@
-
 let sum = 0;
 let operator = null;
 let isNewNumber = true;
 let lastInput;
-/להוסיף פעולת onclick()
-const btns = document.querySelectorAll('.btn');
-//תשיג דרך id
-const input = document.getElementsByid("#calculatorNumberInput")[0];
-const calcDisplay = document.getElementById("calculating-display");
-const calcOperatorSigns = ['+', '-', '/', '*'];
-const calcFunctionsSigns = ['=', 'c', "Backspace"];
-input.value = 0;
+const MAX_CHARACTERS_INPUT = 15;
+const MAX_CHARCTER_DISPLAY = 19;
+const NUMBER_INPUT = document.getElementById('calculatorNumberInput');
+const CALCULATOR_DISPLAY = document.getElementById('calculating-display');
+const ID_TO_CONVERT = {
+  'plus': '+',
+  'minus': '-',
+  'multiply': '*',
+  'divide': '/',
+  'equal': '=',
+  'clear': 'c',
+  'backspace': 'Backspace',
+  'zero': '0',
+  'one': '1',
+  'two': '2',
+  'three': '3',
+  'four': '4',
+  'five': '5',
+  'six': '6',
+  'seven': '7',
+  'eight': '8',
+  'nine': '9',
+  'dot': '.'
+};
+const CALCULATOR_OPERATOR_SIGNS = ['+', '-', '/', '*'];
+const CALCULATOR_FUNCTION_SIGN = ['=', 'c', 'Backspace', 'Enter'];
+NUMBER_INPUT.innerHTML = 0;
 //הפוך את החלוקה לפונקציה
-btns.forEach(function(btn) {
-  btn.addEventListener('click', function(event) {
-    let key = event.target.id;
-    if ((key >= 0 && key <= 9) || key == ".") {
-      writeInTextbox(key);
-    }
-    if (calcOperatorSigns.includes(key)) {
-      clickOnOperator(key);
-    }
-    if (calcFunctionsSigns.includes(key)) {
-      calcFunctions(key);
-    }
-  });
+function getClickedButtonId(buttonId) {
+  keySorter(ID_TO_CONVERT[buttonId]);
+}
+
+document.addEventListener('keydown',({key}) => {
+  keySorter(key);
 });
 
-document.addEventListener("keydown", function(event) {
-  let key = event.key;
-  if ((key >= 0 && key <= 9) || key == ".") {
+function keySorter(key) {
+  if ((key >= 0 && key <= 9) || key === '.') {
     writeInTextbox(key);
   }
-  if (calcOperatorSigns.includes(key)) {
+  if (CALCULATOR_OPERATOR_SIGNS.includes(key)) {
     clickOnOperator(key);
   }
-  if (calcFunctionsSigns.includes(key)) {
+  if (CALCULATOR_FUNCTION_SIGN.includes(key)) {
     calcFunctions(key);
   }
-});
+}
 
 function writeInTextbox(key) {
-  if (key == ".") {
-    writeDot();
-  } else {
-    writeNumbers(key);
+  if (NUMBER_INPUT.innerHTML.length < MAX_CHARACTERS_INPUT || !isNewNumber) {
+    if (key === '.') {
+      writeDot();
+    } else {
+      writeNumbers(key);
+    }
   }
 }
 
 function writeDot() {
-  if (!input.value.includes(".")) {
-    if (isNewNumber == false) {
-      input.value = "0.";
-      isNewNumber = true;
+  if (!NUMBER_INPUT.innerHTML.includes('.')) {
+    if (!isNewNumber) {
+      NUMBER_INPUT.innerHTML = '0.';
     } else {
-      input.value = input.value + ".";
-      isNewNumber = true;
+      NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML + '.';
     }
-  }
-}
-
-function writeNumbers(key) {
-  if (input.value != 0) {
-    if (isNewNumber == false) {
-      input.value = key;
-      isNewNumber = true;
-    } else {
-      input.value = input.value + key;
-      isNewNumber = true;
-    }
-  } else {
-    input.value = key;
     isNewNumber = true;
   }
 }
 
-function calcFunctions(key) {
-  switch (key) {
-    case "Backspace":
-      backspace();
-      break;
-    case "c":
-      clear();
-      break;
-    case "=":
-      equalFunction();
-      break;
+function writeNumbers(key) {
+  if (NUMBER_INPUT.innerHTML != '0') {
+    if (!isNewNumber) {
+      NUMBER_INPUT.innerHTML = key;
+    } else {
+      NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML + key;
+    }
+  } else {
+    NUMBER_INPUT.innerHTML = key;
   }
+  isNewNumber = true;
+}
+
+function calcFunctions(key) {
+  if (key === 'Enter') {
+    key = '=';
+  }
+  const CALCULATOR_FUNCTIONS = {
+    'Backspace': backspace,
+    'c': clear,
+    '=': equalFunction,
+  };
+  CALCULATOR_FUNCTIONS[key]();
 }
 //שנה את  סיין
 //להוריד את if הוא מספר
 function clickOnOperator(sign) {
-  let value = input.value;
+  let value = Number(NUMBER_INPUT.innerHTML);
+  let display = CALCULATOR_DISPLAY.innerHTML;
   //Check if value is a number.
-  if (!isNaN(value)) {
-    if (calcDisplay.innerHTML == "") {
-      sum = Number(value);
-      calcDisplay.innerHTML = calcDisplay.innerHTML + sum + sign;
-      operator = sign;
-      isNewNumber = false;
-    } else if (isNewNumber == true) {
-      calcDisplay.innerHTML = calcDisplay.innerHTML + value + sign;
+  if (CALCULATOR_DISPLAY.innerHTML === '') {
+    sum = value;
+    CALCULATOR_DISPLAY.innerHTML = sum + sign;
+    operator = sign;
+    isNewNumber = false;
+  } else if (isNewNumber) {
+    if ((display + value + sign).length <= MAX_CHARCTER_DISPLAY) {
+      CALCULATOR_DISPLAY.innerHTML = display + value + sign;
+      lastInput = value;
       operatorAction();
-      operator = sign;
-      isNewNumber = false;
-    } else {
-      calcDisplay.innerHTML = calcDisplay.innerHTML.substring(0, calcDisplay.innerHTML.length - 1) + sign;
-      operator = sign;
+      if (lastInput !== 0 || operator !== '/') {
+        NUMBER_INPUT.innerHTML = sum;
+        operator = sign;
+        isNewNumber = false;
+      } else {
+        mathError();
+      }
     }
   } else {
-    alert(value + " is not a valid number.");
-  }
-}
-//לא לעשות סוויצ
-function operatorAction() {
-  switch (operator) {
-    case "+":
-      sum = sum + lastInput;
-      break;
-    case "-":
-      sum = sum - lastInput;
-      break;
-    case "*":
-      sum = sum * lastInput;
-      break;
-    case "/":
-      if (lastInput == 0) {
-        clear();
-        alert("you can't divide with 0");
-        break;
-      }
-      sum = sum / lastInput;
-      break;
+    CALCULATOR_DISPLAY.innerHTML = CALCULATOR_DISPLAY.innerHTML.substring(0, CALCULATOR_DISPLAY.innerHTML.length - 1) + sign;
+    operator = sign;
   }
 }
 
+
+//לא לעשות סוויצ
+function operatorAction() {
+  let temp = lastInput;
+  let maxNumbersAfterTheDot = 0;
+  function checksHowManyDigitsAfterTheDot() {
+    let indexOfDotInSum = sum.toString().indexOf('.');
+    let indexOfDotInLastInput = lastInput.toString().indexOf('.');
+    function getsTheNumberWithMaxNumbersAfterTheDot() {
+      let numbersAfterTheDotLastInput = lastInput.toString().slice(indexOfDotInLastInput).length - 1;
+      let numbersAfterTheDotSum = sum.toString().slice(indexOfDotInSum).length - 1;
+      if (isNaN(indexOfDotInSum)) {
+        maxNumbersAfterTheDot = numbersAfterTheDotLastInput;
+      } else if(isNaN(indexOfDotInLastInput)) {
+        maxNumbersAfterTheDot = numbersAfterTheDotSum;
+      }else{
+        maxNumbersAfterTheDot = Math.max(numbersAfterTheDotLastInput,numbersAfterTheDotSum);
+      }
+    }
+    getsTheNumberWithMaxNumbersAfterTheDot();
+  }
+  if (sum % 1 !== 0 || lastInput % 1 !== 0) {
+    checksHowManyDigitsAfterTheDot();
+    sum *= Math.pow(10, maxNumbersAfterTheDot);
+    lastInput *= Math.pow(10, maxNumbersAfterTheDot);
+  }
+  const MATH_OPERATOR = {
+    '+': () => {
+      sum += lastInput;
+      adjustBackToActualSum(maxNumbersAfterTheDot);
+    },
+    '-': () => {
+      sum -= lastInput;
+      adjustBackToActualSum(maxNumbersAfterTheDot);
+    },
+    '*': () => {
+      sum *= lastInput;
+      adjustBackToActualSum(maxNumbersAfterTheDot * 2);
+    },
+    '/': () => {
+      if (lastInput !== 0) {
+        sum /= lastInput;
+      }
+    }
+  };
+  MATH_OPERATOR[operator]();
+  lastInput = temp;
+}
+
 function backspace() {
-  input.value = input.value.substring(0, input.value.length - 1);
-  if (input.value == "") {
-    input.value = 0;
+  NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML.slice(0, NUMBER_INPUT.innerHTML.length - 1);
+  if (NUMBER_INPUT.innerHTML === '') {
+    NUMBER_INPUT.innerHTML = 0;
   }
 }
 
 function clear() {
-  input.value = 0;
-  calcDisplay.innerHTML = "";
+  NUMBER_INPUT.innerHTML = 0;
+  CALCULATOR_DISPLAY.innerHTML = '';
   isNewNumber = true;
   operator = null;
   sum = 0;
+  lastInput = 0;
 }
 
 function equalFunction() {
-  if (calcDisplay.innerHTML != "") {
-    lastInput = Number(input.value);
+  if (CALCULATOR_DISPLAY.innerHTML !== '') {
+    lastInput = Number(NUMBER_INPUT.innerHTML);
     operatorAction();
-    input.value = sum;
-    calcDisplay.innerHTML = "";
-    isNewNumber = false;
-  } else if (isNewNumber == true) {
-    sum = input.value;
-    operatorAction();
-    isNewNumber = false;
-    input.value = sum;
+    if (lastInput !== 0 || operator !== '/') {
+      if ((sum.toString()).length <= MAX_CHARACTERS_INPUT) {
+        NUMBER_INPUT.innerHTML = sum;
+        CALCULATOR_DISPLAY.innerHTML = '';
+      } else {
+        mathError();
+      }
+    } else {
+      mathError();
+    }
   } else {
-    operatorAction();
-    input.value = sum;
-    isNewNumber = false;
+    if (operator !== null) {
+      operatorAction();
+      if ((sum + '').length <= MAX_CHARACTERS_INPUT) {
+        NUMBER_INPUT.innerHTML = sum;
+      } else {
+        mathError();
+      }
+    }
   }
+  isNewNumber = false;
+}
+
+function mathError() {
+  NUMBER_INPUT.innerHTML = 'Math error';
+  setTimeout(function() {
+    clear();
+  }, 1000);
+}
+
+function adjustBackToActualSum(i) {
+  sum /= Math.pow(10, i);
 }
