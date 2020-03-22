@@ -2,11 +2,14 @@ let sum = 0;
 let operator = null;
 let isNewNumber = true;
 let lastInput;
-const MAX_CHARACTERS_INPUT = 15;
-const MAX_CHARCTER_DISPLAY = 19;
+let timesMultipliedBy10;
+const MAX_CHARACTERS_FOR_INT = 15;
+const MAX_CHARACTERS_FOR_DOUBLE = 17;
+const MAX_CHARACTERS_INPUT = 19;
+const MAX_CHARCTER_DISPLAY = 20;
 const NUMBER_INPUT = document.getElementById('calculatorNumberInput');
 const CALCULATOR_DISPLAY = document.getElementById('calculating-display');
-const ID_TO_CONVERT = {
+const CALCULATOR_BUTTONS = {
   'plus': '+',
   'minus': '-',
   'multiply': '*',
@@ -26,20 +29,21 @@ const ID_TO_CONVERT = {
   'nine': '9',
   'dot': '.'
 };
-const CALCULATOR_OPERATOR_SIGNS = ['+', '-', '/', '*'];
-const CALCULATOR_FUNCTION_SIGN = ['=', 'c', 'Backspace', 'Enter'];
+const CALCULATOR_OPERATOR_SIGNS = [CALCULATOR_BUTTONS['plus'], CALCULATOR_BUTTONS['minus'],
+ CALCULATOR_BUTTONS['divide'], CALCULATOR_BUTTONS['multiply']];
+const CALCULATOR_FUNCTION_SIGN = [CALCULATOR_BUTTONS['equal'],CALCULATOR_BUTTONS['clear'],
+CALCULATOR_BUTTONS['backspace'],'Enter'];
 NUMBER_INPUT.innerHTML = 0;
-//הפוך את החלוקה לפונקציה
-function getClickedButtonId(buttonId) {
-  keySorter(ID_TO_CONVERT[buttonId]);
+let getClickedButtonId = buttonId => {
+  keySorter(CALCULATOR_BUTTONS[buttonId]);
 }
 
-document.addEventListener('keydown',({key}) => {
+document.addEventListener('keydown', ({key}) => {
   keySorter(key);
 });
 
-function keySorter(key) {
-  if ((key >= 0 && key <= 9) || key === '.') {
+let keySorter = (key) => {
+  if (key.match(/[0-9]/) !== null || key === '.') {
     writeInTextbox(key);
   }
   if (CALCULATOR_OPERATOR_SIGNS.includes(key)) {
@@ -50,33 +54,50 @@ function keySorter(key) {
   }
 }
 
-function writeInTextbox(key) {
-  if (NUMBER_INPUT.innerHTML.length < MAX_CHARACTERS_INPUT || !isNewNumber) {
+let writeInTextbox = (key) => {
+  let numberOfCharctersInTheInput = NUMBER_INPUT.innerHTML.length;
+  if (!isNewNumber) {
     if (key === '.') {
       writeDot();
     } else {
       writeNumbers(key);
     }
+  } else if (key === '.') {
+    if (numberOfCharctersInTheInput <= MAX_CHARACTERS_FOR_INT) {
+      writeDot();
+    }
+  } else {
+    if (numberOfCharctersInTheInput < MAX_CHARACTERS_FOR_INT) {
+      writeNumbers(key);
+    } else if (numberOfCharctersInTheInput < MAX_CHARACTERS_FOR_DOUBLE && NUMBER_INPUT.innerHTML.includes('.')) {
+      writeNumbers(key);
+    }
   }
 }
 
-function writeDot() {
+let writeDot = () => {
   if (!NUMBER_INPUT.innerHTML.includes('.')) {
     if (!isNewNumber) {
+      if (CALCULATOR_DISPLAY.innerHTML === '') {
+        clear();
+      }
       NUMBER_INPUT.innerHTML = '0.';
     } else {
-      NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML + '.';
+      NUMBER_INPUT.innerHTML += '.';
     }
     isNewNumber = true;
   }
 }
 
-function writeNumbers(key) {
+let writeNumbers = (key) => {
   if (NUMBER_INPUT.innerHTML != '0') {
     if (!isNewNumber) {
+      if (CALCULATOR_DISPLAY.innerHTML === '') {
+        clear();
+      }
       NUMBER_INPUT.innerHTML = key;
     } else {
-      NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML + key;
+      NUMBER_INPUT.innerHTML += key;
     }
   } else {
     NUMBER_INPUT.innerHTML = key;
@@ -84,7 +105,7 @@ function writeNumbers(key) {
   isNewNumber = true;
 }
 
-function calcFunctions(key) {
+let calcFunctions = (key) => {
   if (key === 'Enter') {
     key = '=';
   }
@@ -95,93 +116,128 @@ function calcFunctions(key) {
   };
   CALCULATOR_FUNCTIONS[key]();
 }
-//שנה את  סיין
-//להוריד את if הוא מספר
-function clickOnOperator(sign) {
-  let value = Number(NUMBER_INPUT.innerHTML);
-  let display = CALCULATOR_DISPLAY.innerHTML;
-  //Check if value is a number.
-  if (CALCULATOR_DISPLAY.innerHTML === '') {
-    sum = value;
-    CALCULATOR_DISPLAY.innerHTML = sum + sign;
-    operator = sign;
-    isNewNumber = false;
+
+let clickOnOperator = (oprartorSign) => {
+  let numberInputValue = Number(NUMBER_INPUT.innerHTML);
+  let calculatorDisplayValue = CALCULATOR_DISPLAY.innerHTML;
+  if (calculatorDisplayValue === '') {
+    if (numberInputValue.toString().length < MAX_CHARCTER_DISPLAY) {
+      sum = numberInputValue;
+      CALCULATOR_DISPLAY.innerHTML = sum + oprartorSign;
+      operator = oprartorSign;
+      isNewNumber = false;
+    } else {
+      mathError();
+    }
   } else if (isNewNumber) {
-    if ((display + value + sign).length <= MAX_CHARCTER_DISPLAY) {
-      CALCULATOR_DISPLAY.innerHTML = display + value + sign;
-      lastInput = value;
+    if ((calculatorDisplayValue + numberInputValue + oprartorSign).length <= MAX_CHARCTER_DISPLAY) {
+      CALCULATOR_DISPLAY.innerHTML = calculatorDisplayValue + numberInputValue + oprartorSign;
+      lastInput = numberInputValue;
       operatorAction();
       if (lastInput !== 0 || operator !== '/') {
         NUMBER_INPUT.innerHTML = sum;
-        operator = sign;
+        operator = oprartorSign;
         isNewNumber = false;
       } else {
         mathError();
       }
     }
   } else {
-    CALCULATOR_DISPLAY.innerHTML = CALCULATOR_DISPLAY.innerHTML.substring(0, CALCULATOR_DISPLAY.innerHTML.length - 1) + sign;
-    operator = sign;
+    CALCULATOR_DISPLAY.innerHTML = CALCULATOR_DISPLAY.innerHTML.slice(0, CALCULATOR_DISPLAY.innerHTML.length - 1) + oprartorSign;
+    operator = oprartorSign;
+  }
+}
+
+let multiplyBy10 = () => {
+  sum *= 10;
+  lastInput *= 10;
+  if (operator === '*') {
+    timesMultipliedBy10 += 2;
+  }else{
+    timesMultipliedBy10++;
   }
 }
 
 
-//לא לעשות סוויצ
-function operatorAction() {
-  let temp = lastInput;
-  let maxNumbersAfterTheDot = 0;
-  function checksHowManyDigitsAfterTheDot() {
-    let indexOfDotInSum = sum.toString().indexOf('.');
-    let indexOfDotInLastInput = lastInput.toString().indexOf('.');
-    function getsTheNumberWithMaxNumbersAfterTheDot() {
-      let numbersAfterTheDotLastInput = lastInput.toString().slice(indexOfDotInLastInput).length - 1;
-      let numbersAfterTheDotSum = sum.toString().slice(indexOfDotInSum).length - 1;
-      if (isNaN(indexOfDotInSum)) {
-        maxNumbersAfterTheDot = numbersAfterTheDotLastInput;
-      } else if(isNaN(indexOfDotInLastInput)) {
-        maxNumbersAfterTheDot = numbersAfterTheDotSum;
-      }else{
-        maxNumbersAfterTheDot = Math.max(numbersAfterTheDotLastInput,numbersAfterTheDotSum);
+  let isCalculationRight = () => {
+    let result;
+    let resultThatEqualToSum;
+    let resultThatEqualToLastInput;
+
+    const MATH_OPERATOR = {
+      '+': () => {
+        result = sum + lastInput;
+        resultThatEqualToSum = result - lastInput;
+        resultThatEqualToLastInput = result - sum;
+      },
+      '-': () => {
+        result = sum - lastInput;
+        resultThatEqualToSum = result + lastInput;
+        resultThatEqualToLastInput = sum - result;
+      },
+      '*': () => {
+        result = sum * lastInput;
+        if (lastInput !== 0) {
+          resultThatEqualToSum = result / lastInput;
+        } else {
+          resultThatEqualToSum = sum;
+        }
+        if (sum !== 0) {
+          resultThatEqualToLastInput = result / sum;
+        } else {
+          resultThatEqualToLastInput = lastInput;
+        }
+      },
+      '/': () => {
+        if (lastInput !== 0) {
+          result = sum / lastInput;
+          resultThatEqualToSum = result * lastInput;
+          resultThatEqualToLastInput = sum / result;
+        }
+      }
+    };
+
+    MATH_OPERATOR[operator]();
+    if (resultThatEqualToSum === sum && resultThatEqualToLastInput === lastInput) {
+      sum = result;
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
+let operatorAction = () => {
+  let tempLastInput = lastInput;
+  timesMultipliedBy10 = 0;
+
+  for (var i = 0; i < MAX_CHARACTERS_INPUT; i++) {
+    if (isCalculationRight()) {
+      lastInput = tempLastInput;
+      sum /= Math.pow(10, timesMultipliedBy10);
+      break;
+    } else {
+      if (lastInput !== 0 || operator !== '/') {
+        multiplyBy10();
+      } else {
+        lastInput = tempLastInput;
+        sum /= Math.pow(10, timesMultipliedBy10);
+        break;
       }
     }
-    getsTheNumberWithMaxNumbersAfterTheDot();
   }
-  if (sum % 1 !== 0 || lastInput % 1 !== 0) {
-    checksHowManyDigitsAfterTheDot();
-    sum *= Math.pow(10, maxNumbersAfterTheDot);
-    lastInput *= Math.pow(10, maxNumbersAfterTheDot);
-  }
-  const MATH_OPERATOR = {
-    '+': () => {
-      sum += lastInput;
-      adjustBackToActualSum(maxNumbersAfterTheDot);
-    },
-    '-': () => {
-      sum -= lastInput;
-      adjustBackToActualSum(maxNumbersAfterTheDot);
-    },
-    '*': () => {
-      sum *= lastInput;
-      adjustBackToActualSum(maxNumbersAfterTheDot * 2);
-    },
-    '/': () => {
-      if (lastInput !== 0) {
-        sum /= lastInput;
-      }
+}
+
+let backspace = () => {
+  if (isNewNumber) {
+    NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML.slice(0, NUMBER_INPUT.innerHTML.length - 1);
+    if (NUMBER_INPUT.innerHTML === '') {
+      NUMBER_INPUT.innerHTML = 0;
     }
-  };
-  MATH_OPERATOR[operator]();
-  lastInput = temp;
-}
-
-function backspace() {
-  NUMBER_INPUT.innerHTML = NUMBER_INPUT.innerHTML.slice(0, NUMBER_INPUT.innerHTML.length - 1);
-  if (NUMBER_INPUT.innerHTML === '') {
-    NUMBER_INPUT.innerHTML = 0;
   }
 }
 
-function clear() {
+let clear = () => {
   NUMBER_INPUT.innerHTML = 0;
   CALCULATOR_DISPLAY.innerHTML = '';
   isNewNumber = true;
@@ -190,40 +246,40 @@ function clear() {
   lastInput = 0;
 }
 
-function equalFunction() {
-  if (CALCULATOR_DISPLAY.innerHTML !== '') {
-    lastInput = Number(NUMBER_INPUT.innerHTML);
-    operatorAction();
-    if (lastInput !== 0 || operator !== '/') {
-      if ((sum.toString()).length <= MAX_CHARACTERS_INPUT) {
-        NUMBER_INPUT.innerHTML = sum;
-        CALCULATOR_DISPLAY.innerHTML = '';
+let equalFunction = () => {
+  if (operator !== null) {
+    if (CALCULATOR_DISPLAY.innerHTML !== '') {
+      lastInput = Number(NUMBER_INPUT.innerHTML);
+      operatorAction();
+      if (!sum.toString().includes('e')) {
+        if ((lastInput !== 0 || operator !== '/') && timesMultipliedBy10 < MAX_CHARACTERS_INPUT) {
+          NUMBER_INPUT.innerHTML = sum;
+          CALCULATOR_DISPLAY.innerHTML = '';
+        } else {
+          mathError();
+        }
       } else {
         mathError();
       }
     } else {
-      mathError();
-    }
-  } else {
-    if (operator !== null) {
       operatorAction();
-      if ((sum + '').length <= MAX_CHARACTERS_INPUT) {
-        NUMBER_INPUT.innerHTML = sum;
+      if (!sum.toString().includes('e')) {
+        if (timesMultipliedBy10 < MAX_CHARACTERS_INPUT) {
+          NUMBER_INPUT.innerHTML = sum;
+        } else {
+          mathError();
+        }
       } else {
         mathError();
       }
     }
+    isNewNumber = false;
   }
-  isNewNumber = false;
 }
 
-function mathError() {
+let mathError = () => {
   NUMBER_INPUT.innerHTML = 'Math error';
   setTimeout(function() {
     clear();
   }, 1000);
-}
-
-function adjustBackToActualSum(i) {
-  sum /= Math.pow(10, i);
 }

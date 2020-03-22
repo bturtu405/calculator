@@ -9,73 +9,85 @@
 
 <body>
   <div class="calculator">
-    <h1 id="calculating-display" maxlength="19"></h1>
-    <h1 id ="calculatorNumberInput"></h1>
-        <div class="buttons-row">
-          <button onclick="getClickedButtonId(this.id)" id="seven">
-            7
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="eight">
-            8
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="nine">
-            9
-          </button>
-
-          <button onclick="getClickedButtonId(this.id)" id="backspace">
-            &larr;
-          </button>
-           <button onclick="getClickedButtonId(this.id)" id="clear">
-              c
-          </button>
-        </div>
-        <div class="buttons-row">
-          <button onclick="getClickedButtonId(this.id)" id="four">
-            4
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="five">
-            5
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="six">
-            6
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="plus">
-            +
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="minus">
-            -
-          </button>
-        </div>
-        <div class="buttons-row">
-          <button onclick="getClickedButtonId(this.id)" id="one">
-            1
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="two">
-            2
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="three">
-            3
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="multiply">
-            *
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="divide">
-            /
-          </button>
-        </div>
-        <div class="buttons-row">
-          <button onclick="getClickedButtonId(this.id)" id="zero" class="big-button">
-            0
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="dot">
-            .
-          </button>
-          <button onclick="getClickedButtonId(this.id)" id="equal" class="big-button">
-            =
-          </button>
-        </div>
+    <h1 id="calculating-display"></h1>
+    <h1 id="calculatorNumberInput"></h1>
+    <div class="numbers-buttons">
+      <div class="buttons-row">
+        <button onclick="getClickedButtonId(this.id)" id="seven">
+          7
+        </button>
+        <button onclick="getClickedButtonId(this.id)" id="eight">
+          8
+        </button>
+        <button onclick="getClickedButtonId(this.id)" id="nine">
+          9
+        </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="four">
+        4
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="five">
+        5
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="six">
+        6
+      </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="one">
+        1
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="two">
+        2
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="three">
+        3
+      </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="zero">
+        0
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="dot">
+        .
+      </button>
+      </div>
+    </div>
+    <div class="operator-buttons">
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="backspace">
+        &larr;
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="clear">
+        c
+      </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="plus">
+        +
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="minus">
+        -
+      </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="multiply">
+        *
+      </button>
+      <button onclick="getClickedButtonId(this.id)" id="divide">
+        /
+      </button>
+      </div>
+      <div class="buttons-row">
+      <button onclick="getClickedButtonId(this.id)" id="equal" class="equal-button">
+        =
+      </button>
+      </div>
+    </div>
   </div>
+  <script type="text/javascript" src="calculator.js">
+  </script>
 </body>
-<script type="text/javascript" src="calculator.js">
-</script>
+
 </html>

@@ -16,21 +16,34 @@
   margin-top: 5%;
   margin-left: 40%;
   margin-right: 40%;
-  background-color: #ededed;
+  background-color: #A9A9A9;
   border-radius: 4px;
-  box-shadow:inset 0px 39px 0px -24px #ededed;
+  box-shadow:inset 0px 39px 0px -24px #A9A9A9;
 }
 
 .buttons-row{
-position: sticky;
-width: 95%;
-margin-left: 2.5%;
 height: 20%;
+width:100%;
+}
+
+
+.numbers-buttons{
+  display: inline-block;
+  width: 54%;
+  margin-left: 5%;
+  position: relative;
+}
+
+.operator-buttons{
+  position: relative;
+  display: inline-block;
+  width: 36%;
+  margin-right: 2%;
 }
 
  button{
   height: 100%;
-  width: 18%;
+  width: 30px;
   box-shadow: inset 0px 39px 0px -24px #e67a73;
   background-color: #e4685d;
   border-radius: 4px;
@@ -43,9 +56,12 @@ height: 20%;
   text-shadow: 0px 1px 0px #b23e35;
 }
 
-.big-button{
-  width: 37.77%;
+#equal{
+  width: 68px;
+}
 
+#zero{
+width: 68px;
 }
 
 button:hover{
